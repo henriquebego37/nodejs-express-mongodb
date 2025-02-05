@@ -1,17 +1,9 @@
-import http from "http";
+import app from "./src/app.js"
 
-const PORT = 3000;
+const PORT = 8000;
 
-const rotas = {
-      "/": "curso de node.js",
-      "/livros": "entrei na rota livros"
-};
-
-const server = http.createServer((req, res) => {
-      res.writeHead(200, { "Content-Type": "text/plain" }) // cabeçalho de uma requisição
-      res.end(rotas[req.url])
-});
-
-server.listen(PORT, () => { // evento que monitora o servidor. 
+app.listen(PORT, () => { // evento que monitora o servidor. 
       console.log(`server running in port => ${PORT}`)
 });
+
+
