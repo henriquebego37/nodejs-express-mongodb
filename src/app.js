@@ -1,32 +1,34 @@
 import express from "express";
-// import { Request, Response } from "express"
+import conectaDatabase from "./config/dbconect.js";
+import livro from "./models/Livro.js"
+
+const conexao = await conectaDatabase();
+
+conexao.on("error", (erro) => {
+      console.error("erro de conexao", erro);
+});
+
+conexao.once("open", () => {
+      console.log("conexao banco sucesso!")
+})
 
 const app = express();
 app.use(express.json()); //midleware ter acesso aos objetos
 
-const livros = [
-      {
-            id: 1,
-            titulo: "Moby Dick"
-      },
-      {
-            id: 2,
-            titulo: "Hobbit"
-      }
-]
+app.get("/", (req, res) => {
+      res.status(200).send("Olá, você está acessando a página principal");
+})
 
-function buscaLivro(id) {
-      return livros.findIndex(livro => {
-            return livro.id === Number(id);
-      })
-}
-
-app.get("/livros", (req, res) => {
-      // res.status(200).send({ "Livros buscados: ": livros })
-      res.status(200).json(livros);
+app.get("/livros", async (req, res) => {
+      const listaLivros = await livro.find({});
+      res.status(200).json(listaLivros);
 });
 
-app.get("/livros/:id", (req, res) => { //
+app.get("/livros/:id", async (req, res) => {
+
+      // const listaLivros = await livro.findById({});
+      // res.status(200).json(listaLivros);
+
       const getByIdLivro = buscaLivro(req.params.id)
       res.status(200).json(livros[getByIdLivro]);
 })
@@ -48,8 +50,6 @@ app.delete("/livros/delete/:id", (req, res) => {
       res.status(200).send("Livro excluido com sucesso!");
 })
 
-app.get("/", (req, res) => {
-      res.status(200).send("Olá, você está acessando a página principal");
-})
 
-export default app; 
+export default app;
+
