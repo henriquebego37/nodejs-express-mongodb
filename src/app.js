@@ -19,10 +19,6 @@ app.get("/", (req, res) => {
       res.status(200).send("Olá, você está acessando a página principal");
 })
 
-app.get("/livros", async (req, res) => {
-      const listaLivros = await livro.find({});
-      res.status(200).json(listaLivros);
-});
 
 app.get("/livros/:id", async (req, res) => {
 
