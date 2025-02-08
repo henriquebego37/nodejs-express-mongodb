@@ -1,4 +1,5 @@
 import livro from "../models/Livro.js";
+import { autor } from "../models/Autor.js";
 
 class LivroController {
 
@@ -10,7 +11,6 @@ class LivroController {
                   const listaLivros = await livro.find({});
                   res.status(201).json({ message: "Livros consultados com sucesso!", livros: listaLivros })
             } catch (err) {
-                  console.log(erro)
                   res.status(500).json({ message: `Falha ao buscar livros: ${erro.message}` })
             }
 
@@ -32,14 +32,26 @@ class LivroController {
 
       // criar livros
       static async criarLivros(req, res) {
+            const criarLivros = req.body;
             try {
-                  const criarLivros = await livro.create(req.body)
-                  res.status(201).json({ message: "Livro cadastrado com sucesso!", livro: criarLivros })
+                  const autorEncontrado = await autor.findById(criarLivros.autor);
+                  const livroCompleto = { ...criarLivros, autor: { ...autorEncontrado._doc } };
+                  const livroCriado = await livro.create(livroCompleto);
+                  res.status(201).json({ message: "Livro cadastrado com sucesso!", livro: livroCriado })
             } catch (err) {
                   console.log(err)
                   res.status(500).json({ message: `Falha ao cadastrar o livro - ${err.message}` })
             }
+      }
 
+      static async listarLivroByEditor(req, res) {
+            const editoraGet = req.query.editora;
+            try {
+                  const livrosPorEditora = await livro.find({ editora: editoraGet });
+                  res.status(200).json({ message: "Livro buscado com sucesso!", livro: livrosPorEditora });
+            } catch (error) {
+                  res.status(500).json({ message: `Falha ao cadastrar o livro - ${err.message}` })
+            }
       }
 
       // * method: PUT
